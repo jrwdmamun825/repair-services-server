@@ -15,6 +15,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   const reviewCollection = client.db("mobileRepair").collection("userReview");
   const servicesCollection = client.db("mobileRepair").collection("services");
+  const orderCollection = client.db("mobileRepair").collection("orders");
+  const adminCollection = client.db("mobileRepair").collection("admins");
 
   app.post('/reviews' , (req,res) => {
       const review = req.body;
@@ -59,6 +61,32 @@ client.connect(err => {
       })
 
   })
+  app.post('/addOrder' , (req,res) => {
+    const order = req.body;
+    orderCollection.insertOne(order)
+    .then((documents) => {
+      res.send(documents)
+      console.log(documents);
+    })
+
+  })
+  app.get('/orderLists' , (req,res) => {
+    orderCollection.find()
+    .toArray((err,result) => {
+      res.send(result)
+    })
+  })
+  app.post('/makeAdmin', (req,res) => {
+    const admin = req.body;
+    adminCollection.insertOne(admin)
+    .then((result) => {
+      res.send(result.insertedCount > 0 )
+      console.log(result);
+    })
+    
+  })
+
+  
 });
 
 
