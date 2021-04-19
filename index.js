@@ -76,6 +76,17 @@ client.connect(err => {
         res.send(result)
       })
   })
+  app.get('/yourOrder', (req, res) => {
+    const email = req.query.email;
+    console.log(email);
+    orderCollection.find({email: req.query.email})
+      .toArray((err, results) => {
+        res.send(results)
+        console.log(results)
+      })
+  })
+
+
   app.post('/makeAdmin', (req, res) => {
     const admin = req.body;
     const email = req.body.email;
