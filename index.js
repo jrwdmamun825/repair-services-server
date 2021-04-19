@@ -18,75 +18,93 @@ client.connect(err => {
   const orderCollection = client.db("mobileRepair").collection("orders");
   const adminCollection = client.db("mobileRepair").collection("admins");
 
-  app.post('/reviews' , (req,res) => {
-      const review = req.body;
-      console.log(review);
-      reviewCollection.insertOne(review)
+  app.post('/reviews', (req, res) => {
+    const review = req.body;
+    console.log(review);
+    reviewCollection.insertOne(review)
       .then(documents => {
-          res.send(documents.insertedCount > 0 )
+        res.send(documents.insertedCount > 0)
         //   console.log(documents);
       })
-    
-    })
-    app.get('/testomonials' , (req,res)=> {
-        reviewCollection.find()
-        .toArray((err,documents) => {
-            res.send(documents)
-        })
-    })
+
+  })
+  app.get('/testomonials', (req, res) => {
+    reviewCollection.find()
+      .toArray((err, documents) => {
+        res.send(documents)
+      })
+  })
   console.log('database connect')
 
-  app.post('/addService' , (req,res) => {
-      const serviceInfo = req.body ;
-      console.log(serviceInfo);
-      servicesCollection.insertOne(serviceInfo)
-      .then(documents =>{
-        res.send(documents.insertedCount > 0 )
+  app.post('/addService', (req, res) => {
+    const serviceInfo = req.body;
+    console.log(serviceInfo);
+    servicesCollection.insertOne(serviceInfo)
+      .then(documents => {
+        res.send(documents.insertedCount > 0)
         console.log(documents);
       })
   })
-  app.get('/services' , (req,res) => {
-      servicesCollection.find()
-      .toArray((err,document) => {
+  app.get('/services', (req, res) => {
+    servicesCollection.find()
+      .toArray((err, document) => {
         res.send(document)
-    })
+      })
   })
 
-  app.get('/orderById/:id', (req,res) => {
-      const id = ObjectID(req.params.id)
-      console.log(id);
-      servicesCollection.findOne(id)
+  app.get('/orderById/:id', (req, res) => {
+    const id = ObjectID(req.params.id)
+    console.log(id);
+    servicesCollection.findOne(id)
       .then((result) => {
-          res.send(result)
+        res.send(result)
       })
 
   })
-  app.post('/addOrder' , (req,res) => {
+  app.post('/addOrder', (req, res) => {
     const order = req.body;
     orderCollection.insertOne(order)
-    .then((documents) => {
-      res.send(documents)
-      console.log(documents);
-    })
+      .then((documents) => {
+        res.send(documents)
+        console.log(documents);
+      })
 
   })
-  app.get('/orderLists' , (req,res) => {
+  app.get('/orderLists', (req, res) => {
     orderCollection.find()
-    .toArray((err,result) => {
-      res.send(result)
-    })
+      .toArray((err, result) => {
+        res.send(result)
+      })
   })
-  app.post('/makeAdmin', (req,res) => {
+  app.post('/makeAdmin', (req, res) => {
     const admin = req.body;
+    const email = req.body.email;
+    console.log(email);
     adminCollection.insertOne(admin)
-    .then((result) => {
-      res.send(result.insertedCount > 0 )
-      console.log(result);
-    })
-    
+      .then((result) => {
+        res.send(result.insertedCount > 0)
+        console.log(result);
+      })
+
   })
 
-  
+  app.delete('/deleted/:id', (req, res) => {
+    const id = ObjectID(req.params.id)
+    console.log(id);
+    servicesCollection.findOneAndDelete({ _id: id })
+      .then((result) => {
+        res.send(!!result.value)
+      })
+  })
+  app.post('/isAdmin', (req, res) => {
+    const email = req.body.email;
+    adminCollection.find({ email: email })
+      .toArray((err,admins) => {
+        res.send(admins.length > 0)
+      })
+  })
+
+
 });
 
 
